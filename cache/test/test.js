@@ -37,6 +37,14 @@ describe('Check Cache Features', function() {
 		}, 20)
 	})
 
+  it('Try Get Missing Item', function(done) {
+		cache.getItem('sad473nsdgfdndsf', function(err, result) {
+			assert.equal(null, err)
+			assert.equal(null, result)
+			done()
+		})
+	})
+
   it('Delete Saved Item', function(done) {
 		cache.setItem('foo', null, function(err, count) {
 			// console.log('REMOVE', arguments)
