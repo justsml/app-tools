@@ -1,9 +1,6 @@
 "use strict";
 var mongoose = require('mongoose')
-		
-
 /*
-
 Example:
 var Cache = require('app/cache')
 var cache = new Cache(req.app.db, 'propertydetailscache')
