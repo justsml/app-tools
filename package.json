@@ -1,0 +1,28 @@
+{
+  "name": "app-tools",
+  "version": "0.5.0",
+  "description": "Miscellaneous app modules I use all over.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justsml/app-tools.git"
+  },
+  "author": "Dan Levy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/justsml/app-tools/issues"
+  },
+  "homepage": "https://github.com/justsml/app-tools",
+  "devDependencies": {
+    "mocha": "^2.0.1"
+  },
+  "dependencies": {
+    "mongodb": "^1.4.23"
+  }
+}
