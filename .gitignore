@@ -1,0 +1,8 @@
+tmp/*
+temp/*
+logs/*
+bower_components/*
+node_modules/*
+*.bak
+*.log
+
