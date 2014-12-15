@@ -1,5 +1,6 @@
 "use strict";
 /*
+
 Example:
 var Cache = require('app/cache')
 var cache = new Cache(req.app.db, 'propertydetailscache')
@@ -10,26 +11,6 @@ var Cache = module.exports = function(db, collectionName) {
 	self.collectionName = collectionName || 'cache'
 	self.db = db || null;
 }
-
-Cache.prototype.get = Cache.prototype.getItem = function(key, callback) {
-	var self = this;
-	self.checkConnection(self.db, function(err, db) {
-		if ( err ) { return callback(err) } // Should fail early if we don't have a db
-		if ( !db ) { return callback(new Error('Failed to connect to database')) } // Should fail early
-		if ( db && db.collection ) {
-			// db.collection(self.collectionName, function _getColl(err, c) {
-				var c = self.model
-				if ( !c ) { return callback(err, new Error('Error getting collection')) }
-				c.find({_id: key}).exec(function(err, items) {
-					callback(err, items && items[0] && items[0].data)
-				})
-			// })
-		} else {
-			return callback(new Error('Couldn\'t connect to db'))
-		}
-	})
-}
-
 Cache.prototype.checkIndexes = function(collection) {
 	var self = this;
 	if ( ! self.indexChecked ) {
@@ -53,9 +34,8 @@ Cache.prototype.getItem = function(key, callback) {
 		return callback(new Error('Couldn\'t connect to db'))
 	}
 }
-Cache.prototype.set = Cache.prototype.setItem = function(key, value, callback) {
+Cache.prototype.setItem = function(key, value, callback) {
 	var self = this;
-
 	var db = self.db
 	if ( !db ) { return callback(new Error('Failed to connect to database')) } // Should fail early if we don't 
 	if ( db && db.collection ) {
