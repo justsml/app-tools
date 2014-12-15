@@ -7,6 +7,7 @@ var cache = null
 var assert = require('assert');
 var db = null,
 	connecting = false;
+var idKey = 'http://api.realtytrac.com/search/all/3560%209th%20St.%2C%20Boulder%2C%20CO%2080304?format=json&borrower=&count=10&ApiKey=c7d06fc1-d13d-4ae4-bff8';
 // Add this as a member method for now... should be private
 function getConnection(callback) {
 	if ( db && db.collection ) {
@@ -52,7 +53,7 @@ describe('Module: app-tools/cache', function() {
 
   it('Save Item', function(done) {
 		getConnection(function(err, db) {
-			cache.setItem('foo', {foo: 'bar'}, function(err, count) {
+			cache.setItem(idKey, {foo: 'bar'}, function(err, count) {
 				// console.log('SET', arguments)
 				assert.equal(null, err)
 				assert.ok(count.result.ok) // handle response if { w: 0 } or 1
@@ -67,7 +68,7 @@ describe('Module: app-tools/cache', function() {
   	// wait after a timeout -- we don't use write sync
 		getConnection(function(err, db) {
 	  	setTimeout(function() {
-				cache.getItem('foo', function(err, result) {
+				cache.getItem(idKey, function(err, result) {
 					// console.log('GET', arguments)
 					assert.equal(null, err)
 					assert.equal(result.foo, 'bar')
@@ -77,17 +78,17 @@ describe('Module: app-tools/cache', function() {
 	  });
 	})
 
-  it('Delete Saved Item', function(done) {
-		getConnection(function(err, db) {
-	  	setTimeout(function() {
-				cache.setItem('foo', null, function(err, count) {
-					// console.log('REMOVE', arguments)
-					assert.equal(null, err)
-					// assert.ok(!count || count === 1 || count && count.ok ) // handle response if { w: 0 } or 1
-					done()
-				})
-			}, 350);
-		});
-	})
+ //  it('Delete Saved Item', function(done) {
+	// 	getConnection(function(err, db) {
+	//   	setTimeout(function() {
+	// 			cache.setItem(idKey, null, function(err, count) {
+	// 				// console.log('REMOVE', arguments)
+	// 				assert.equal(null, err)
+	// 				// assert.ok(!count || count === 1 || count && count.ok ) // handle response if { w: 0 } or 1
+	// 				done()
+	// 			})
+	// 		}, 350);
+	// 	});
+	// })
 
 })
