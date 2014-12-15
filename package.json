@@ -1,6 +1,6 @@
 {
   "name": "app-tools",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Miscellaneous app modules I use all over.",
   "main": "index.js",
   "directories": {
@@ -23,6 +23,6 @@
     "mocha": "^2.0.*"
   },
   "dependencies": {
-    "mongodb": "^1.4.*"
+    "mongodb": "~2.0"
   }
 }
