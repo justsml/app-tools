@@ -26,5 +26,6 @@
     "mongodb": "~2.0"
   },
   "dependencies": {
+    "better-assert": "^1.0.2"
   }
 }
