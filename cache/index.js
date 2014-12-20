@@ -31,7 +31,9 @@ Schema is like this:
 
 */
 var Cache = module.exports = function(opts) {
-	var self = this;
+	var self = this,
+			debug = opts.debug;
+
 	self.timeout = opts.timeout = opts.timeout || 86400// 1 day
 	self.w = opts.w = opts.writeConcern || opts.w || 0
 	// self.collection gets reused to hold the real collection later
@@ -42,7 +44,7 @@ var Cache = module.exports = function(opts) {
 	self.opts = opts
 	// get the needed collection and cache it at self.collection as soon as we can
 	if ( ! self.collection ) {
-		_getCollection.call(self, function(err, c) {
+		_getCollection(self, function(err, c) {
 			self.collection = c;
 			// collection now cached at self.collection
 			// make sure we have a valid 'expire index' - fire async at instance creation, Cache class instances should live for a while
@@ -58,16 +60,16 @@ var Cache = module.exports = function(opts) {
 	function _checkIndexes(collection) {
 		if ( ! self.indexCreated && self.autoExpire ) {
 			self.indexCreated = true
-			collection.ensureIndex( { "createdDate": 1 }, { expireAfterSeconds: self.timeout } )
+			collection.ensureIndex( { "createdDate": 1 }, 
+				{ expireAfterSeconds: self.timeout }, 
+				function(err, idx) {
+					console.warn('_checkIndexes', arguments);
+				}
+			)
 		}
 	}
 }
-Cache.prototype.isDbValid = function () {
-	// need to do better here...
-	return (this.db && this.db.collection) ? true : false 
-}
-function _getCollection(cb) {
-	var self = this;
+function _getCollection(self, cb) {
 	if ( self.collection  && typeof(self.collection) !== 'string') {
 		return cb(null, self.collection)
 	} else if ( self.isDbValid() ) {
@@ -79,13 +81,17 @@ function _getCollection(cb) {
 	}
 }
 
+Cache.prototype.isDbValid = function () {
+	// need to do better here...
+	return (this.db && this.db.collection) ? true : false 
+}
 Cache.prototype.getItem = function(key, callback) {
 	var self = this,
 			db = this.db;
 
 	if ( !db ) { return callback(new Error('Failed to connect to database')) } // Should fail early if we don't 
 	if ( self.isDbValid() ) {
-		_getCollection.call(self, function _getColl(err, c) {
+		_getCollection(self, function _getColl(err, c) {
 			if ( !c ) { return callback(err, new Error('Error getting collection')) }
 			c.find({_id: key}).toArray(function(err, items) {
 				callback(err, items && items[0] && items[0].data)
@@ -102,7 +108,7 @@ Cache.prototype.setItem = function(key, value, callback) {
 
 	if ( !db ) { return callback(new Error('Failed to connect to database')) } // Should fail early if we don't 
 	if ( self.isDbValid() ) {
-		_getCollection.call(self, function _getColl(err, c) {
+		_getCollection(self, function _getColl(err, c) {
 			if ( err ) { return callback(err, new Error('Error getting collection')) }
 			// check if we need to remove instead of upsert
 			if ( ! value ) {
@@ -110,7 +116,7 @@ Cache.prototype.setItem = function(key, value, callback) {
 			} else {
 				var fieldsToSave = { '_id': key, 'data': value, 'createdDate': new Date() }
 				// WARNING: Upsert w/ no saftey
-				c.update({_id: key}, fieldsToSave, {upsert:true, w: self.w}, callback)
+				c.update({_id: key}, fieldsToSave, {upsert: true, w: self.w}, callback)
 			}
 		})
 	} else {

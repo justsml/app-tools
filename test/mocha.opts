@@ -1,4 +1,4 @@
 --require better-assert
---reporter spec
+--reporter list
 --timeout 10000
 --growl
