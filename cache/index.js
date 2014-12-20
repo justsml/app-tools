@@ -58,12 +58,12 @@ var Cache = module.exports = function(opts) {
 	
 
 	function _checkIndexes(collection) {
-		if ( ! self.indexCreated && self.autoExpire ) {
+		if ( !self.indexCreated && self.autoExpire ) {
 			self.indexCreated = true
 			collection.ensureIndex( { "createdDate": 1 }, 
 				{ expireAfterSeconds: self.timeout }, 
 				function(err, idx) {
-					console.warn('_checkIndexes', arguments);
+					if (opts.debug) {console.warn('_checkIndexes', arguments);}
 				}
 			)
 		}
