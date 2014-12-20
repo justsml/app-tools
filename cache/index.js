@@ -41,7 +41,7 @@ var Cache = module.exports = function(opts) {
 	self.collection = opts.collection || null
 	self.db = opts.db || null;
 	self.autoExpire = opts.autoExpire || true;
-	self.opts = opts
+	// self.opts = opts
 	// get the needed collection and cache it at self.collection as soon as we can
 	if ( ! self.collection ) {
 		_getCollection(self, function(err, c) {
@@ -63,7 +63,7 @@ var Cache = module.exports = function(opts) {
 			collection.ensureIndex( { "createdDate": 1 }, 
 				{ expireAfterSeconds: self.timeout }, 
 				function(err, idx) {
-					if (opts.debug) {console.warn('_checkIndexes', arguments);}
+					// if (opts.debug) {console.warn('_checkIndexes', arguments);}
 				}
 			)
 		}
@@ -85,7 +85,7 @@ Cache.prototype.isDbValid = function () {
 	// need to do better here...
 	return (this.db && this.db.collection) ? true : false 
 }
-Cache.prototype.getItem = function(key, callback) {
+Cache.prototype.get = Cache.prototype.getItem = function(key, callback) {
 	var self = this,
 			db = this.db;
 
@@ -101,7 +101,7 @@ Cache.prototype.getItem = function(key, callback) {
 		return callback(new Error('Couldn\'t connect to db'))
 	}
 }
-Cache.prototype.setItem = function(key, value, callback) {
+Cache.prototype.set = Cache.prototype.setItem = function(key, value, callback) {
 	var self = this, 
 			db = this.db;
 	callback = callback || function() { };
