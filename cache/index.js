@@ -13,7 +13,12 @@ var cache = new Cache({
 	autoExpire: true, //[true|false],
 	w: 0 // ( set to 1 for safety, or 0 to wait for nothing! )
 	)
-cache.setItem('key', data)
+cache.setItem('key', data, function (err, data) {
+	
+})
+cache.setItem('key', data, function (err, data) {
+	
+})
 
 
 Info:
@@ -91,6 +96,7 @@ Cache.prototype.getItem = function(key, callback) {
 Cache.prototype.setItem = function(key, value, callback) {
 	var self = this, 
 			db = this.db;
+	callback = callback || function() { };
 
 	if ( !db ) { return callback(new Error('Failed to connect to database')) } // Should fail early if we don't 
 	if ( self.isDbValid() ) {
