@@ -65,7 +65,7 @@ describe('Module: app-tools/cache', function() {
 	})
 
 
-	it('Get Saved Item, after 250ms DELAY', function(done) {
+	it('Get Saved Item (25ms delay)', function(done) {
 		// wait after a timeout -- we don't use write sync
 		setTimeout(function() {
 			cache.getItem(idKey, function(err, result) {
@@ -74,20 +74,18 @@ describe('Module: app-tools/cache', function() {
 				assert.equal(result.foo, 'bar')
 				done()
 			})
-		}, 250)
+		}, 25)
 	})
 
- //  it('Delete Saved Item', function(done) {
-	// 	getConnection(function(err, db) {
-	//   	setTimeout(function() {
-	// 			cache.setItem(idKey, null, function(err, count) {
-	// 				// console.log('REMOVE', arguments)
-	// 				assert.equal(null, err)
-	// 				// assert.ok(!count || count === 1 || count && count.ok ) // handle response if { w: 0 } or 1
-	// 				done()
-	// 			})
-	// 		}, 350);
-	// 	});
-	// })
+	it('Delete Saved Item (25ms delay)', function(done) {
+		setTimeout(function() {
+			cache.setItem(idKey, null, function(err, count) {
+				// console.log('REMOVE', arguments)
+				assert.equal(null, err)
+				// assert.ok(!count || count === 1 || count && count.ok ) // handle response if { w: 0 } or 1
+				done()
+			})
+		}, 25);
+	})
 
 })
