@@ -35,14 +35,15 @@ var Cache = module.exports = function(opts) {
 	self.timeout = opts.timeout = opts.timeout || 86400// 1 day
 	self.w = opts.w = opts.writeConcern || opts.w || 0
 	// self.collection gets reused to hold the real collection later
-	self.collection = opts.collection || 'cache' 
+	self.collectionName = typeof(opts.collection) === 'string' ? opts.collection : 'cache'
+	self.collection = opts.collection || null
 	self.db = opts.db || null;
 	self.autoExpire = opts.autoExpire || true;
 	self.opts = opts
 	// get the needed collection and cache it at self.collection as soon as we can
 	if ( ! self.collection ) {
 		_getCollection.call(self, function(err, c) {
-			self.collection = col;
+			self.collection = c;
 			// collection now cached at self.collection
 			// make sure we have a valid 'expire index' - fire async at instance creation, Cache class instances should live for a while
 			if ( ! opts.autoExpire ) {
@@ -52,31 +53,32 @@ var Cache = module.exports = function(opts) {
 	}
 	if (!self.db) { throw new Error('Missing required option: {db: MongoClient}') }
 	if (!self.collection || self.collection.length < 1) { throw new Error('Invalid collection name: {collection: "itemCache"}') }
+	
 
-	self.isDbValid = function () {
-		// need to do better here...
-		return (self.db && self.db.collection) ? true : false 
+	function _checkIndexes(collection) {
+		if ( ! self.indexCreated && self.autoExpire ) {
+			self.indexCreated = true
+			collection.ensureIndex( { "createdDate": 1 }, { expireAfterSeconds: self.timeout } )
+		}
 	}
+}
+Cache.prototype.isDbValid = function () {
+	// need to do better here...
+	return (this.db && this.db.collection) ? true : false 
 }
 function _getCollection(cb) {
 	var self = this;
 	if ( self.collection  && typeof(self.collection) !== 'string') {
 		return cb(null, self.collection)
 	} else if ( self.isDbValid() ) {
-		self.db.collection(self.collection, function(err, col) {
+		self.db.collection(self.collectionName, function(err, col) {
 			cb(err, col)
 		})
 	} else {
 		throw new Error('Something unexpected happened, no collection retrieved.')
 	}
 }
-function _checkIndexes(collection) {
-	var self = this;
-	if ( ! self.indexCreated && self.autoExpire ) {
-		self.indexCreated = true
-		collection.ensureIndex( { "createdDate": 1 }, { expireAfterSeconds: self.timeout } )
-	}
-}
+
 Cache.prototype.getItem = function(key, callback) {
 	var self = this,
 			db = this.db;
