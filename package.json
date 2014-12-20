@@ -20,10 +20,11 @@
   },
   "homepage": "https://github.com/justsml/app-tools",
   "devDependencies": {
-    "mocha": "^2.0.*"
-  },
-  "dependencies": {
+    "mocha": "~2.0.*",
+    "should": "~4.4",
     "mongoose": "~3.8",
     "mongodb": "~2.0"
+  },
+  "dependencies": {
   }
 }
